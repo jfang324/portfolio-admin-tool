@@ -1,12 +1,14 @@
-import { BulletPointDocument } from '@/interfaces/BulletPointDocument'
+import { BulletPointDocument } from '@/interfaces/BulletPoint'
 import mongoose, { Schema } from 'mongoose'
 
 const bulletPointSchema: Schema<BulletPointDocument> = new Schema(
     {
+        id: {
+            type: String,
+        },
         order: {
             type: Number,
             required: true,
-            unique: true,
         },
         text: {
             type: String,
@@ -21,5 +23,13 @@ const bulletPointSchema: Schema<BulletPointDocument> = new Schema(
     { collection: 'BulletPoints' }
 )
 
-export default (connection: mongoose.Connection) =>
-    mongoose.models.BulletPoint || connection.model<BulletPointDocument>('BulletPoint', bulletPointSchema)
+bulletPointSchema.pre('save', async function (next) {
+    if (this.isNew) {
+        this.id = this._id.toString()
+    }
+    next()
+})
+
+export default function BulletPointModel(connection: mongoose.Connection) {
+    return mongoose.models.BulletPoint || connection.model<BulletPointDocument>('BulletPoint', bulletPointSchema)
+}

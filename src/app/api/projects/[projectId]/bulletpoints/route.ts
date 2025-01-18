@@ -14,9 +14,9 @@ export async function GET(request: NextRequest, { params }: { params: { projectI
         const projectService = new ProjectService(connection)
         const bulletPoints = await projectService.getAllBulletPoints(projectId)
 
-        return NextResponse.json(bulletPoints)
+        return NextResponse.json(bulletPoints, { status: 200 })
     } catch (error) {
-        console.error('Error getting bullet points of a project::', error)
+        console.error(`Error getting bullet points of a project: ${error}`)
         return NextResponse.json({ error: 'Failed to get bullet points of a project' }, { status: 500 })
     }
 }
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest, { params }: { params: { project
 
         return NextResponse.json(newBulletPointDocument, { status: 200 })
     } catch (error) {
-        console.error('Error creating a bullet point::', error)
+        console.error(`Error creating a bullet point: ${error}`)
         return NextResponse.json({ error: 'Failed to create a bullet point' }, { status: 500 })
     }
 }

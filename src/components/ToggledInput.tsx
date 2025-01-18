@@ -1,15 +1,17 @@
 import { Input } from '@/components/ui/input'
+import { BulletPoint } from '@/interfaces/BulletPoint'
 import { CheckCheck, Pencil, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 
 interface ToggledInputProps {
-    projectId: string
-    text: string
+    bulletPoint: BulletPoint
+    handleDeleteBulletPoint: (projectId: string, bulletPointId: string) => void
+    handleUpdateBulletPoint: (bulletPoint: BulletPoint) => void
 }
 
-export const ToggledInput = ({ projectId, text }: ToggledInputProps) => {
+export const ToggledInput = ({ bulletPoint, handleDeleteBulletPoint, handleUpdateBulletPoint }: ToggledInputProps) => {
     const [editing, setEditing] = useState<boolean>(false)
-    const [value, setValue] = useState<string>(text)
+    const [value, setValue] = useState<string>(bulletPoint.text)
 
     return (
         <div className="flex flex-row gap-2 w-full">
@@ -18,13 +20,19 @@ export const ToggledInput = ({ projectId, text }: ToggledInputProps) => {
                     <div className="flex flex-row gap-1">
                         <CheckCheck
                             className="cursor-pointer border border-black rounded p-1 hover:bg-gray-100"
-                            onClick={() => setEditing(false)}
+                            onClick={() => {
+                                setEditing(false)
+                                handleUpdateBulletPoint({
+                                    ...bulletPoint,
+                                    text: value,
+                                })
+                            }}
                         />
                         <X
                             className="cursor-pointer border border-black rounded p-1 hover:bg-gray-100"
                             onClick={() => {
                                 setEditing(false)
-                                setValue(text)
+                                setValue(bulletPoint.text)
                             }}
                         />
                     </div>
@@ -39,10 +47,10 @@ export const ToggledInput = ({ projectId, text }: ToggledInputProps) => {
                         />
                         <Trash2
                             className="cursor-pointer border border-black rounded p-1 hover:bg-gray-100"
-                            onClick={() => console.log('delete')}
+                            onClick={() => handleDeleteBulletPoint(bulletPoint.projectId as string, bulletPoint.id)}
                         />
                     </div>
-                    <div>{value}</div>
+                    <div className="my-auto">{value}</div>
                 </div>
             )}
         </div>

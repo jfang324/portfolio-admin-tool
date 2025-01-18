@@ -1,17 +1,19 @@
 import { ToggledInput } from '@/components/ToggledInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { BulletPoint } from '@/interfaces/BulletPointDocument'
-import { ProjectDocument } from '@/interfaces/ProjectDocument'
+import { BulletPoint } from '@/interfaces/BulletPoint'
+import { Project } from '@/interfaces/Project'
 import { CheckCheck, Dot, Pencil, Plus, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 
 interface ProjectEntryProps {
-    project: ProjectDocument
+    project: Project
     bulletPoints: BulletPoint[]
-    handleDeleteProject: (projectId: string) => void
-    handleUpdateProject: (project: ProjectDocument) => void
+    handleDeleteProject: (id: string) => void
+    handleUpdateProject: (project: Project) => void
     handleCreateBulletPoint: (projectId: string) => void
+    handleDeleteBulletPoint: (projectId: string, bulletPointId: string) => void
+    handleUpdateBulletPoint: (bulletPoint: BulletPoint) => void
 }
 
 export const ProjectEntry = ({
@@ -20,13 +22,15 @@ export const ProjectEntry = ({
     handleDeleteProject,
     handleUpdateProject,
     handleCreateBulletPoint,
+    handleDeleteBulletPoint,
+    handleUpdateBulletPoint,
 }: ProjectEntryProps) => {
     const [editing, setEditing] = useState<boolean>(false)
     const [name, setName] = useState<string>(project.name)
     const [link, setLink] = useState<string>(project.link)
 
     return (
-        <div className="border border-black rounded p-4 flex flex-col gap-3 w-full sm:w-2/5">
+        <div className="border border-black rounded p-4 flex flex-col gap-3 w-full sm:w-2/5 text-xs">
             <div className="flex flex-col gap-2">
                 {editing ? (
                     <div className="flex flex-col gap-1 items-end">
@@ -39,7 +43,7 @@ export const ProjectEntry = ({
                                         ...project,
                                         name,
                                         link,
-                                    } as ProjectDocument)
+                                    })
                                 }}
                             />
                             <X
@@ -55,7 +59,7 @@ export const ProjectEntry = ({
                             <div className="grid w-full max-w-sm items-center gap-1.5">
                                 <Label className="font-bold">Name</Label>
                                 <Input
-                                    className="border-black"
+                                    className="border-black text-xs"
                                     defaultValue={name}
                                     onChange={(e) => setName(e.target.value)}
                                 />
@@ -79,7 +83,7 @@ export const ProjectEntry = ({
                             />
                             <Trash2
                                 className="cursor-pointer border border-black rounded p-1 hover:bg-gray-100"
-                                onClick={() => handleDeleteProject(project._id.toString())}
+                                onClick={() => handleDeleteProject(project.id)}
                             />
                         </div>
                         <div className="flex flex-row gap-2 justify-center w-full px-3">
@@ -97,20 +101,25 @@ export const ProjectEntry = ({
             </div>
 
             <div className="flex flex-col gap-1">
-                {bulletPoints.map((bulletPoint, idx) =>
+                {bulletPoints.map((bulletPoint) =>
                     editing ? (
-                        <ToggledInput key={idx} projectId={project._id.toString()} text={bulletPoint.text} />
+                        <ToggledInput
+                            key={bulletPoint.id}
+                            bulletPoint={bulletPoint}
+                            handleDeleteBulletPoint={handleDeleteBulletPoint}
+                            handleUpdateBulletPoint={handleUpdateBulletPoint}
+                        />
                     ) : (
-                        <div key={idx} className="flex flex-row gap-0 w-full">
+                        <div key={bulletPoint.id} className="flex flex-row gap-0 w-full">
                             <Dot className="w-6 h-6" />
-                            <div className="w-11/12">{bulletPoint.text}</div>
+                            <div className="w-11/12 my-auto">{bulletPoint.text}</div>
                         </div>
                     )
                 )}
                 {editing && (
                     <Plus
                         className="cursor-pointer border border-black rounded p-1 hover:bg-gray-100"
-                        onClick={() => handleCreateBulletPoint(project._id.toString())}
+                        onClick={() => handleCreateBulletPoint(project.id)}
                     />
                 )}
             </div>

@@ -1,16 +1,29 @@
-import { BulletPoint, BulletPointDocument } from '@/interfaces/BulletPointDocument'
-import { Project, ProjectDocument } from '@/interfaces/ProjectDocument'
+import { BulletPoint } from '@/interfaces/BulletPoint'
+import { Project } from '@/interfaces/Project'
 
 export class ApiClient {
     constructor() {}
 
-    async getProjects(): Promise<ProjectDocument[]> {
+    /**
+     * Gets all projects
+     * @returns An array of all projects
+     */
+    async getProjects(): Promise<Project[]> {
         const response = await fetch('/api/projects')
-        const projects = await response.json()
-        return projects
+
+        if (!response.ok) {
+            throw new Error('Failed to get projects')
+        }
+
+        return response.json()
     }
 
-    async createProject(project: Project): Promise<ProjectDocument> {
+    /**
+     * Create a project
+     * @param project - The project to create
+     * @returns The created project
+     */
+    async createProject(project: Partial<Project>): Promise<Project> {
         const response = await fetch('/api/projects', {
             method: 'POST',
             headers: {
@@ -26,8 +39,13 @@ export class ApiClient {
         return response.json()
     }
 
-    async deleteProject(projectId: string): Promise<ProjectDocument> {
-        const response = await fetch(`/api/projects/${projectId}`, {
+    /**
+     * Delete a project
+     * @param id - The ID of the project to delete
+     * @returns The deleted project
+     */
+    async deleteProject(id: string): Promise<Project> {
+        const response = await fetch(`/api/projects/${id}`, {
             method: 'DELETE',
         })
 
@@ -38,8 +56,13 @@ export class ApiClient {
         return response.json()
     }
 
-    async updateProject(project: ProjectDocument): Promise<ProjectDocument> {
-        const response = await fetch(`/api/projects/${project._id}`, {
+    /**
+     * Update a project
+     * @param project - The project to update
+     * @returns The updated project
+     */
+    async updateProject(project: Partial<Project>): Promise<Project> {
+        const response = await fetch(`/api/projects/${project.id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -54,7 +77,12 @@ export class ApiClient {
         return response.json()
     }
 
-    async getBulletPoints(projectId: string): Promise<BulletPointDocument[]> {
+    /**
+     * Get all bullet points of a project
+     * @param projectId - The ID of the project to get the bullet points of
+     * @returns An array of bullet points
+     */
+    async getBulletPoints(projectId: string): Promise<BulletPoint[]> {
         const response = await fetch(`/api/projects/${projectId}/bulletpoints`)
 
         if (!response.ok) {
@@ -64,7 +92,12 @@ export class ApiClient {
         return response.json()
     }
 
-    async createBulletPoint(bulletPoint: BulletPoint): Promise<BulletPointDocument> {
+    /**
+     * Create a bullet point
+     * @param bulletPoint - The bullet point to create
+     * @returns The created bullet point
+     */
+    async createBulletPoint(bulletPoint: Partial<BulletPoint>): Promise<BulletPoint> {
         const response = await fetch(`/api/projects/${bulletPoint.projectId}/bulletpoints`, {
             method: 'POST',
             headers: {
@@ -80,13 +113,40 @@ export class ApiClient {
         return response.json()
     }
 
-    async deleteBulletPoint(projectId: string, bulletPointId: string): Promise<BulletPointDocument> {
+    /**
+     * Delete a bullet point
+     * @param projectId - The ID of the project the bullet point belongs to
+     * @param bulletPointId - The ID of the bullet point to delete
+     * @returns The deleted bullet point
+     */
+    async deleteBulletPoint(projectId: string, bulletPointId: string): Promise<BulletPoint> {
         const response = await fetch(`/api/projects/${projectId}/bulletpoints/${bulletPointId}`, {
             method: 'DELETE',
         })
 
         if (!response.ok) {
             throw new Error('Failed to delete a bullet point')
+        }
+
+        return response.json()
+    }
+
+    /**
+     * Update a bullet point
+     * @param bulletPoint - The bullet point to update
+     * @returns The updated bullet point
+     */
+    async updateBulletPoint(bulletPoint: Partial<BulletPoint>): Promise<BulletPoint> {
+        const response = await fetch(`/api/projects/${bulletPoint.projectId}/bulletpoints/${bulletPoint.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(bulletPoint),
+        })
+
+        if (!response.ok) {
+            throw new Error('Failed to update a bullet point')
         }
 
         return response.json()

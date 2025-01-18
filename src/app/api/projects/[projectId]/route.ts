@@ -16,7 +16,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { proje
 
         return NextResponse.json(deletedProjectDocument, { status: 200 })
     } catch (error) {
-        console.error('Error deleting a project::', error)
+        console.error(`Error deleting a project: ${error}`)
         return NextResponse.json({ error: 'Failed to delete a project' }, { status: 500 })
     }
 }
@@ -41,11 +41,11 @@ export async function PUT(request: NextRequest, { params }: { params: { projectI
     try {
         const connection = await connectToDb()
         const projectService = new ProjectService(connection)
-        const updatedProjectDocument = await projectService.updateOneProject(projectId, project)
+        const updatedProjectDocument = await projectService.updateOneProject(project)
 
         return NextResponse.json(updatedProjectDocument, { status: 200 })
     } catch (error) {
-        console.error('Error updating a project::', error)
+        console.error(`Error updating a project: ${error}`)
         return NextResponse.json({ error: 'Failed to update a project' }, { status: 500 })
     }
 }
