@@ -8,9 +8,15 @@ interface EducationEntryProps {
     education: Education
     handleDeleteEducation: (id: string) => void
     handleUpdateEducation: (updatedEducation: Education) => void
+    handleLockEducations: (draggable: boolean) => void
 }
 
-export function EducationEntry({ education, handleDeleteEducation, handleUpdateEducation }: EducationEntryProps) {
+export function EducationEntry({
+    education,
+    handleDeleteEducation,
+    handleUpdateEducation,
+    handleLockEducations,
+}: EducationEntryProps) {
     const [editing, setEditing] = useState<boolean>(false)
     const [school, setSchool] = useState<string>(education.school)
     const [degree, setDegree] = useState<string>(education.degree)
@@ -18,7 +24,7 @@ export function EducationEntry({ education, handleDeleteEducation, handleUpdateE
     const [gpa, setGpa] = useState<number>(education.gpa)
 
     return (
-        <div className="border border-black rounded p-4 flex flex-col gap-3 w-full sm:w-2/5 text-xs">
+        <div className="border border-black rounded p-4 flex flex-col gap-3 text-xs">
             <div className="flex flex-col gap-2">
                 {editing ? (
                     <div className="flex flex-col gap-1 items-end">
@@ -27,6 +33,7 @@ export function EducationEntry({ education, handleDeleteEducation, handleUpdateE
                                 className="cursor-pointer border border-black rounded p-1 hover:bg-gray-100"
                                 onClick={() => {
                                     setEditing(false)
+                                    handleLockEducations(true)
                                     handleUpdateEducation({
                                         ...education,
                                         school,
@@ -40,6 +47,7 @@ export function EducationEntry({ education, handleDeleteEducation, handleUpdateE
                                 className="cursor-pointer border border-black rounded p-1 hover:bg-gray-100"
                                 onClick={() => {
                                     setEditing(false)
+                                    handleLockEducations(true)
                                     setSchool(education.school)
                                     setDegree(education.degree)
                                     setGraduationYear(education.graduationYear)
@@ -52,11 +60,17 @@ export function EducationEntry({ education, handleDeleteEducation, handleUpdateE
                         <div className="flex flex-row gap-1">
                             <Pencil
                                 className="cursor-pointer border border-black rounded p-1 hover:bg-gray-100"
-                                onClick={() => setEditing(true)}
+                                onClick={() => {
+                                    setEditing(true)
+                                    handleLockEducations(false)
+                                }}
                             />
                             <Trash2
                                 className="cursor-pointer border border-black rounded p-1 hover:bg-gray-100"
-                                onClick={() => handleDeleteEducation(education.id)}
+                                onClick={() => {
+                                    handleDeleteEducation(education.id)
+                                    handleLockEducations(true)
+                                }}
                             />
                         </div>
                     </div>

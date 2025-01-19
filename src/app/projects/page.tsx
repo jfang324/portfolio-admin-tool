@@ -6,12 +6,14 @@ import { BulletPoint } from '@/interfaces/BulletPoint'
 import { Project } from '@/interfaces/Project'
 import { ApiClient } from '@/services/ApiClient'
 import { useEffect, useMemo, useState } from 'react'
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
 export default function Page() {
     const { toast } = useToast()
     const apiClient = useMemo(() => new ApiClient(), [])
     const [projects, setProjects] = useState<Project[]>([])
     const [bulletPoints, setBulletPoints] = useState<Record<string, BulletPoint[]>>({})
+    const [draggable, setDraggable] = useState<boolean>(true)
 
     useEffect(() => {
         const fetchProjects = async () => {
@@ -147,20 +149,94 @@ export default function Page() {
         }
     }
 
+    const handleRearrangeProjects = async (projects: Project[]) => {
+        try {
+            const shiftedProjects = projects.map((project, idx) => ({ ...project, order: idx }))
+
+            Promise.all(shiftedProjects.map((project) => apiClient.updateProject(project)))
+
+            setProjects(shiftedProjects)
+            toast({ title: 'Success', description: `Rearranged Projects` })
+        } catch (error) {
+            toast({ title: 'Error', description: 'Failed to rearrange projects, refresh the page' })
+            console.error(`Error rearranging projects: ${error}`)
+        }
+    }
+
+    const handleRearrangeBulletPoints = async (projectId: string, bulletPoints: BulletPoint[]) => {
+        try {
+            const shiftedBulletPoints = bulletPoints.map((bulletPoint, idx) => ({ ...bulletPoint, order: idx }))
+
+            Promise.all(shiftedBulletPoints.map((bulletPoint) => apiClient.updateBulletPoint(bulletPoint)))
+
+            setBulletPoints((prevBulletPoints) => ({ ...prevBulletPoints, [projectId]: shiftedBulletPoints }))
+            toast({ title: 'Success', description: `Rearranged Bullet Points` })
+        } catch (error) {
+            toast({ title: 'Error', description: 'Failed to rearrange bullet points, refresh the page' })
+            console.error(`Error rearranging bullet points: ${error}`)
+        }
+    }
+
     return (
         <div className="flex flex-col gap-2 items-center w-full">
-            {projects.map((project) => (
-                <ProjectEntry
-                    key={project.id}
-                    project={project}
-                    bulletPoints={bulletPoints[project.id] || []}
-                    handleDeleteProject={handleDeleteProject}
-                    handleUpdateProject={handleUpdateProject}
-                    handleCreateBulletPoint={handleCreateBulletPoint}
-                    handleDeleteBulletPoint={handleDeleteBulletPoint}
-                    handleUpdateBulletPoint={handleUpdateBulletPoint}
-                />
-            ))}
+            <DragDropContext
+                onDragEnd={(result: any) => {
+                    if (!result.destination || result.destination.index === result.source.index) return
+
+                    const shiftedProjects = Array.from(projects)
+                    const [removed] = shiftedProjects.splice(result.source.index, 1)
+                    shiftedProjects.splice(result.destination.index, 0, removed)
+
+                    handleRearrangeProjects(shiftedProjects)
+                }}
+            >
+                <Droppable
+                    droppableId="droppable"
+                    direction="vertical"
+                    isDropDisabled={false}
+                    isCombineEnabled={false}
+                    ignoreContainerClipping={true}
+                >
+                    {(provided: any) => (
+                        <div
+                            ref={provided.innerRef}
+                            {...provided.droppableProps}
+                            className="flex flex-col gap-2 w-full sm:w-2/5"
+                        >
+                            {projects.map((project) => (
+                                <Draggable
+                                    key={project.id}
+                                    draggableId={project.id.toString()}
+                                    index={project.order}
+                                    isDragDisabled={!draggable}
+                                >
+                                    {(provided: any) => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                        >
+                                            <ProjectEntry
+                                                project={project}
+                                                bulletPoints={bulletPoints[project.id] || []}
+                                                handleDeleteProject={handleDeleteProject}
+                                                handleUpdateProject={handleUpdateProject}
+                                                handleCreateBulletPoint={handleCreateBulletPoint}
+                                                handleDeleteBulletPoint={handleDeleteBulletPoint}
+                                                handleUpdateBulletPoint={handleUpdateBulletPoint}
+                                                handleLockProjects={setDraggable}
+                                                handleRearrangeBulletPoints={handleRearrangeBulletPoints}
+                                            />
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </div>
+                    )}
+                </Droppable>
+            </DragDropContext>
+
             <Button className="text-xs" onClick={handleCreateProject}>
                 Create a New Project
             </Button>
