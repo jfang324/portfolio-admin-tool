@@ -1,5 +1,7 @@
 import { BulletPoint } from '@/interfaces/BulletPoint'
+import { Education } from '@/interfaces/Education'
 import { Project } from '@/interfaces/Project'
+import { Skill } from '@/interfaces/Skill'
 
 export class ApiClient {
     constructor() {}
@@ -147,6 +149,152 @@ export class ApiClient {
 
         if (!response.ok) {
             throw new Error('Failed to update a bullet point')
+        }
+
+        return response.json()
+    }
+
+    /**
+     * Get all educations
+     * @returns An array of all educations
+     */
+    async getEducations(): Promise<Education[]> {
+        const response = await fetch('/api/educations')
+
+        if (!response.ok) {
+            throw new Error('Failed to get educations')
+        }
+
+        return response.json()
+    }
+
+    /**
+     * Create an education
+     * @param education - The education to create
+     * @returns The created education
+     */
+    async createEducation(education: Partial<Education>): Promise<Education> {
+        const response = await fetch('/api/educations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(education),
+        })
+
+        if (!response.ok) {
+            throw new Error('Failed to create an education')
+        }
+
+        return response.json()
+    }
+
+    /**
+     * Delete an education
+     * @param id - The ID of the education to delete
+     * @returns The deleted education
+     */
+    async deleteEducation(id: string): Promise<Education> {
+        const response = await fetch(`/api/educations/${id}`, {
+            method: 'DELETE',
+        })
+
+        if (!response.ok) {
+            throw new Error('Failed to delete an education')
+        }
+
+        return response.json()
+    }
+
+    /**
+     * Update an education
+     * @param education - The education to update
+     * @returns The updated education
+     */
+    async updateEducation(education: Partial<Education>): Promise<Education> {
+        const response = await fetch(`/api/educations/${education.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(education),
+        })
+
+        if (!response.ok) {
+            throw new Error('Failed to update an education')
+        }
+
+        return response.json()
+    }
+
+    /**
+     * Get all skills
+     * @returns An array of all skills
+     */
+    async getSkills(): Promise<Skill[]> {
+        const response = await fetch('/api/skills')
+
+        if (!response.ok) {
+            throw new Error('Failed to get skills')
+        }
+
+        return response.json()
+    }
+
+    /**
+     * Create a skill
+     * @param skill - The skill to create
+     * @returns The created skill
+     */
+    async createSkill(skill: Partial<Skill>): Promise<Skill> {
+        const response = await fetch('/api/skills', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(skill),
+        })
+
+        if (!response.ok) {
+            throw new Error('Failed to create a skill')
+        }
+
+        return response.json()
+    }
+
+    /**
+     * Delete a skill
+     * @param id - The ID of the skill to delete
+     * @returns The deleted skill
+     */
+    async deleteSkill(id: string): Promise<Skill> {
+        const response = await fetch(`/api/skills/${id}`, {
+            method: 'DELETE',
+        })
+
+        if (!response.ok) {
+            throw new Error('Failed to delete a skill')
+        }
+
+        return response.json()
+    }
+
+    /**
+     * Update a skill
+     * @param skill - The skill to update
+     * @returns The updated skill
+     */
+    async updateSkill(skill: Partial<Skill>): Promise<Skill> {
+        const response = await fetch(`/api/skills/${skill.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(skill),
+        })
+
+        if (!response.ok) {
+            throw new Error('Failed to update a skill')
         }
 
         return response.json()

@@ -161,7 +161,9 @@ export default function Page() {
                     handleUpdateBulletPoint={handleUpdateBulletPoint}
                 />
             ))}
-            <Button onClick={handleCreateProject}>Create a new project</Button>
+            <Button className="text-xs" onClick={handleCreateProject}>
+                Create a New Project
+            </Button>
         </div>
     )
 }
