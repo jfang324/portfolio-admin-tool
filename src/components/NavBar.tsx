@@ -12,6 +12,11 @@ export const NavBar = () => {
         <NavigationMenu>
             <NavigationMenuList className="border border-black rounded">
                 <NavigationMenuItem>
+                    <Link href="/" legacyBehavior passHref>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>Home</NavigationMenuLink>
+                    </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
                     <Link href="/education" legacyBehavior passHref>
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>Education</NavigationMenuLink>
                     </Link>

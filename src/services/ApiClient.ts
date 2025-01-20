@@ -1,4 +1,5 @@
 import { BulletPoint } from '@/interfaces/BulletPoint'
+import { Demo } from '@/interfaces/Demo'
 import { Education } from '@/interfaces/Education'
 import { Project } from '@/interfaces/Project'
 import { Skill } from '@/interfaces/Skill'
@@ -295,6 +296,92 @@ export class ApiClient {
 
         if (!response.ok) {
             throw new Error('Failed to update a skill')
+        }
+
+        return response.json()
+    }
+
+    async getDemos(): Promise<Demo[]> {
+        const response = await fetch('/api/demos')
+
+        if (!response.ok) {
+            throw new Error('Failed to get demos')
+        }
+
+        return response.json()
+    }
+
+    async createDemo(demo: Partial<Demo>): Promise<Demo> {
+        const response = await fetch('/api/demos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(demo),
+        })
+
+        if (!response.ok) {
+            throw new Error('Failed to create a demo')
+        }
+
+        return response.json()
+    }
+
+    async deleteDemo(id: string): Promise<Demo> {
+        const response = await fetch(`/api/demos/${id}`, {
+            method: 'DELETE',
+        })
+
+        if (!response.ok) {
+            throw new Error('Failed to delete a demo')
+        }
+
+        return response.json()
+    }
+
+    async updateDemo(demo: Partial<Demo>): Promise<Demo> {
+        const response = await fetch(`/api/demos/${demo.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(demo),
+        })
+
+        if (!response.ok) {
+            throw new Error('Failed to update a demo')
+        }
+
+        return response.json()
+    }
+
+    async uploadImage(demoId: string, image: File): Promise<Demo> {
+        if (!image) {
+            throw new Error('No image provided')
+        }
+
+        const formData = new FormData()
+        formData.append('file', image)
+
+        const response = await fetch(`/api/demos/${demoId}/images`, {
+            method: 'POST',
+            body: formData,
+        })
+
+        if (!response.ok) {
+            throw new Error('Failed to upload an image')
+        }
+
+        return response.json()
+    }
+
+    async deleteImage(demoId: string, imageId: string): Promise<Demo> {
+        const response = await fetch(`/api/demos/${demoId}/images/${imageId}`, {
+            method: 'DELETE',
+        })
+
+        if (!response.ok) {
+            throw new Error('Failed to delete an image')
         }
 
         return response.json()
