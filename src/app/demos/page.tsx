@@ -103,7 +103,7 @@ export default function Page() {
     }
 
     return (
-        <div className="flex flex-col gap-2 items-center w-full sm:w-2/5">
+        <div className="flex flex-col gap-2 items-center w-full">
             <DragDropContext
                 onDragEnd={(result: any) => {
                     if (!result.destination || result.destination.index === result.source.index) return
@@ -123,7 +123,11 @@ export default function Page() {
                     ignoreContainerClipping={true}
                 >
                     {(provided: any) => (
-                        <div ref={provided.innerRef} {...provided.droppableProps} className="flex flex-col gap-1">
+                        <div
+                            ref={provided.innerRef}
+                            {...provided.droppableProps}
+                            className="flex flex-col gap-1 w-full sm:w-2/5"
+                        >
                             {demos.map((demo) => (
                                 <Draggable
                                     key={demo.id}
