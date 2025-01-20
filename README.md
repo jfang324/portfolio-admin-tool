@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## About The Project
+
+A full stack web application that lets me manage my portfolio site by integrating with MongoDB Atlas and Amazon S3 where the content is stored
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+To use this application, you will need accounts for the following services:
+
+-   MongoDB Atlas
+-   Amazon S3
+
+### Installation
+
+To install the application locally, run the following commands:
+
+1. Clone the repository:
+```sh
+git clone https://github.com/jfang324/portfolio-admin-tool.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Navigate to the project directory:
+```sh
+cd portfolio-admin-tool
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Install the dependencies:
+```sh
+npm install --legacy-peer-deps
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Create a `.env` file in the project directory and add the following environment variables:
+```env
+//use values provided after creating a bucket in s3
+BUCKET_NAME = <bucket name>
+BUCKET_REGION = <bucket region>
+ACCESS_KEY = <bucket access key>
+SECRET_ACCESS_KEY = <bucket secret access key>
 
-## Learn More
+//use values provided after creating a database in mongodb atlas
+DB_USERNAME = <database username>
+DB_PASSWORD = <database password>
+DATABASE_URL = <url provided after creating and choosing to programatiically connect>
+```
 
-To learn more about Next.js, take a look at the following resources:
+5. Start the application:
+```sh
+npm run build
+npm run start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+6. Open your browser and navigate to `http://localhost:3000` to access the application
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Gallery & Demonstrations
 
-## Deploy on Vercel
+<img src='https://github.com/user-attachments/assets/33e5924e-8182-4585-8157-f8c5a3f8c2c4'> </img>
+_Homepage_
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+<img src='https://github.com/user-attachments/assets/455e8741-135a-4279-8015-91f08dd56882'> </img>
+_Projects_
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+<img src='https://github.com/user-attachments/assets/70763da3-6860-4fcd-8e4d-aeea86be5fe5'> </img>
+_Skills_
+
+<img src='https://github.com/user-attachments/assets/bc2233f6-4da7-4d27-8eed-76e9bc90da61'> </img>
+_Demos_
+
+## Contact
+
+Jeffery Fang - [jefferyfang324@gmail.com](mailto:jefferyfang324@gmail.com)
+
+## Tools & Technologies
+
+-   Next.js
+-   React
+-   Tailwind CSS
+-   MongoDB Atlas
+-   Amazon S3
+-   shadcn/ui
