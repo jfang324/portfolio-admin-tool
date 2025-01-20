@@ -5,6 +5,7 @@ import { useToast } from '@/hooks/use-toast'
 import { BulletPoint } from '@/interfaces/BulletPoint'
 import { Project } from '@/interfaces/Project'
 import { ApiClient } from '@/services/ApiClient'
+import { set } from 'mongoose'
 import { useEffect, useMemo, useState } from 'react'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
@@ -32,11 +33,12 @@ export default function Page() {
                 setBulletPoints(bulletPointsMap)
             } catch (error) {
                 console.error(`Error fetching projects: ${error}`)
+                toast({ title: 'Error', description: 'Failed to fetch projects' })
             }
         }
 
         fetchProjects()
-    }, [apiClient])
+    }, [apiClient, toast])
 
     const handleCreateProject = async () => {
         const project = {
@@ -48,8 +50,8 @@ export default function Page() {
         try {
             const newProject = await apiClient.createProject(project)
 
-            setProjects((prevProjects) => [...prevProjects, newProject])
-            setBulletPoints((prevBulletPoints) => ({ ...prevBulletPoints, [newProject.id]: [] }))
+            setProjects([...projects, newProject])
+            setBulletPoints({ ...bulletPoints, [newProject.id]: [] })
             toast({ title: 'Success', description: `Created Project: ${newProject.id} with default fields` })
         } catch (error) {
             toast({ title: 'Error', description: 'Failed to create a project' })
@@ -81,9 +83,7 @@ export default function Page() {
         try {
             await apiClient.updateProject(updatedProject)
 
-            setProjects((prevProjects) =>
-                prevProjects.map((project) => (project.id === updatedProject.id ? updatedProject : project))
-            )
+            setProjects(projects.map((project) => (project.id === updatedProject.id ? updatedProject : project)))
             toast({ title: 'Success', description: `Updated Project: ${updatedProject.name}` })
         } catch (error) {
             toast({ title: 'Error', description: 'Failed to update a project' })
@@ -101,10 +101,10 @@ export default function Page() {
         try {
             const newBulletPoint = await apiClient.createBulletPoint(bulletPoint)
 
-            setBulletPoints((prevBulletPoints) => ({
-                ...prevBulletPoints,
-                [projectId]: [...prevBulletPoints[projectId], newBulletPoint],
-            }))
+            setBulletPoints({
+                ...bulletPoints,
+                [projectId]: [...bulletPoints[projectId], newBulletPoint],
+            })
             toast({ title: 'Success', description: `Created Bullet Point: ${newBulletPoint.id} with default fields` })
         } catch (error) {
             toast({ title: 'Error', description: 'Failed to create a bullet point' })
@@ -136,12 +136,12 @@ export default function Page() {
         try {
             await apiClient.updateBulletPoint(updatedBulletPoint)
 
-            setBulletPoints((prevBulletPoints) => ({
-                ...prevBulletPoints,
-                [updatedBulletPoint.projectId as string]: prevBulletPoints[updatedBulletPoint.projectId as string].map(
+            setBulletPoints({
+                ...bulletPoints,
+                [updatedBulletPoint.projectId as string]: bulletPoints[updatedBulletPoint.projectId as string].map(
                     (bulletPoint) => (bulletPoint.id === updatedBulletPoint.id ? updatedBulletPoint : bulletPoint)
                 ),
-            }))
+            })
             toast({ title: 'Success', description: `Updated Bullet Point: ${updatedBulletPoint.text}` })
         } catch (error) {
             toast({ title: 'Error', description: 'Failed to update a bullet point' })
@@ -149,9 +149,9 @@ export default function Page() {
         }
     }
 
-    const handleRearrangeProjects = async (projects: Project[]) => {
+    const handleRearrangeProjects = async (rearrangedProjects: Project[]) => {
         try {
-            const shiftedProjects = projects.map((project, idx) => ({ ...project, order: idx }))
+            const shiftedProjects = rearrangedProjects.map((project, idx) => ({ ...project, order: idx }))
 
             Promise.all(shiftedProjects.map((project) => apiClient.updateProject(project)))
 
@@ -163,13 +163,16 @@ export default function Page() {
         }
     }
 
-    const handleRearrangeBulletPoints = async (projectId: string, bulletPoints: BulletPoint[]) => {
+    const handleRearrangeBulletPoints = async (projectId: string, rearrangedBulletPoints: BulletPoint[]) => {
         try {
-            const shiftedBulletPoints = bulletPoints.map((bulletPoint, idx) => ({ ...bulletPoint, order: idx }))
+            const shiftedBulletPoints = rearrangedBulletPoints.map((bulletPoint, idx) => ({
+                ...bulletPoint,
+                order: idx,
+            }))
 
             Promise.all(shiftedBulletPoints.map((bulletPoint) => apiClient.updateBulletPoint(bulletPoint)))
 
-            setBulletPoints((prevBulletPoints) => ({ ...prevBulletPoints, [projectId]: shiftedBulletPoints }))
+            setBulletPoints({ ...bulletPoints, [projectId]: shiftedBulletPoints })
             toast({ title: 'Success', description: `Rearranged Bullet Points` })
         } catch (error) {
             toast({ title: 'Error', description: 'Failed to rearrange bullet points, refresh the page' })
@@ -183,11 +186,11 @@ export default function Page() {
                 onDragEnd={(result: any) => {
                     if (!result.destination || result.destination.index === result.source.index) return
 
-                    const shiftedProjects = Array.from(projects)
-                    const [removed] = shiftedProjects.splice(result.source.index, 1)
-                    shiftedProjects.splice(result.destination.index, 0, removed)
+                    const rearrangedProjects = Array.from(projects)
+                    const [removed] = rearrangedProjects.splice(result.source.index, 1)
+                    rearrangedProjects.splice(result.destination.index, 0, removed)
 
-                    handleRearrangeProjects(shiftedProjects)
+                    handleRearrangeProjects(rearrangedProjects)
                 }}
             >
                 <Droppable

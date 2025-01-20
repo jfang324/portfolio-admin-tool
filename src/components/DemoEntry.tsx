@@ -6,7 +6,6 @@ import { useToast } from '@/hooks/use-toast'
 import { Demo } from '@/interfaces/Demo'
 import { ApiClient } from '@/services/ApiClient'
 import { CheckCheck, Pencil, Trash2, X } from 'lucide-react'
-import { set } from 'mongoose'
 import { useState } from 'react'
 
 interface DemoEntryProps {
@@ -14,9 +13,16 @@ interface DemoEntryProps {
     handleDeleteDemo: (id: string) => void
     handleUpdateDemo: (demo: Demo) => void
     handleRefreshDemos: (demo: Demo) => void
+    handleLockDemos: (lock: boolean) => void
 }
 
-export const DemoEntry = ({ demo, handleDeleteDemo, handleUpdateDemo, handleRefreshDemos }: DemoEntryProps) => {
+export const DemoEntry = ({
+    demo,
+    handleDeleteDemo,
+    handleUpdateDemo,
+    handleRefreshDemos,
+    handleLockDemos,
+}: DemoEntryProps) => {
     const { toast } = useToast()
     const [editing, setEditing] = useState<boolean>(false)
     const [title, setTitle] = useState<string>(demo.title)
@@ -38,7 +44,7 @@ export const DemoEntry = ({ demo, handleDeleteDemo, handleUpdateDemo, handleRefr
 
             toast({ title: 'Success', description: `Uploaded Image: ${image.name}` })
             handleRefreshDemos(updatedDemo)
-            setGallery((prevGallery) => [...prevGallery, updatedDemo.gallery[updatedDemo.gallery.length - 1]])
+            setGallery([...gallery, updatedDemo.gallery[updatedDemo.gallery.length - 1]])
         } catch (error) {
             toast({ title: 'Error', description: 'Failed to upload an image' })
             console.error(`Error uploading an image: ${error}`)
@@ -51,7 +57,7 @@ export const DemoEntry = ({ demo, handleDeleteDemo, handleUpdateDemo, handleRefr
 
             toast({ title: 'Success', description: `Deleted Image: ${imageId}` })
             handleRefreshDemos(updatedDemo)
-            setGallery((prevGallery) => prevGallery.filter((image) => image.id !== imageId))
+            setGallery(gallery.filter((image) => image.id !== imageId))
         } catch (error) {
             toast({ title: 'Error', description: 'Failed to delete an image' })
             console.error(`Error deleting an image: ${error}`)
@@ -68,6 +74,7 @@ export const DemoEntry = ({ demo, handleDeleteDemo, handleUpdateDemo, handleRefr
                                 className="cursor-pointer border border-black rounded p-1 hover:bg-gray-100"
                                 onClick={() => {
                                     setEditing(false)
+                                    handleLockDemos(true)
                                     handleUpdateDemo({
                                         ...demo,
                                         title,
@@ -82,6 +89,7 @@ export const DemoEntry = ({ demo, handleDeleteDemo, handleUpdateDemo, handleRefr
                                 className="cursor-pointer border border-black rounded p-1 hover:bg-gray-100"
                                 onClick={() => {
                                     setEditing(false)
+                                    handleLockDemos(true)
                                     setTitle(demo.title)
                                     setDescription(demo.description)
                                     setTechnologies(demo.technologies)
@@ -170,12 +178,14 @@ export const DemoEntry = ({ demo, handleDeleteDemo, handleUpdateDemo, handleRefr
                                 className="cursor-pointer border border-black rounded p-1 hover:bg-gray-100"
                                 onClick={() => {
                                     setEditing(true)
+                                    handleLockDemos(false)
                                 }}
                             />
                             <Trash2
                                 className="cursor-pointer border border-black rounded p-1 hover:bg-gray-100"
                                 onClick={() => {
                                     handleDeleteDemo(demo.id)
+                                    handleLockDemos(true)
                                 }}
                             />
                         </div>

@@ -52,7 +52,7 @@ export class SkillService {
 
             return allSkills.map((skill) => mapSkillDocumentToSkill(skill))
         } catch (error) {
-            console.error(`Error getting all skills: ${error}`)
+            console.error(`Error getting all skills:: ${error}`)
             throw new Error('Failed to get all skills')
         }
     }
@@ -70,7 +70,7 @@ export class SkillService {
 
             return mapSkillDocumentToSkill(newSkill)
         } catch (error) {
-            console.error(`Error creating a skill: ${error}`)
+            console.error(`Error creating a skill:: ${error}`)
             throw new Error('Failed to create a skill')
         }
     }
@@ -88,7 +88,7 @@ export class SkillService {
 
             return mapSkillDocumentToSkill(deletedSkill)
         } catch (error) {
-            console.error(`Error deleting a skill: ${error}`)
+            console.error(`Error deleting a skill:: ${error}`)
             throw new Error('Failed to delete a skill')
         }
     }
@@ -106,7 +106,7 @@ export class SkillService {
 
             return mapSkillDocumentToSkill(updatedSkill)
         } catch (error) {
-            console.error(`Error updating a skill: ${error}`)
+            console.error(`Error updating a skill:: ${error}`)
             throw new Error('Failed to update a skill')
         }
     }

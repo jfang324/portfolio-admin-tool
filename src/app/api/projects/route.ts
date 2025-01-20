@@ -6,9 +6,9 @@ export async function GET(request: NextRequest) {
     try {
         const connection = await connectToDb()
         const projectService = new ProjectService(connection)
-        const projects = await projectService.getAllProjects()
+        const allProjects = await projectService.getAllProjects()
 
-        return NextResponse.json(projects, { status: 200 })
+        return NextResponse.json(allProjects, { status: 200 })
     } catch (error) {
         console.error(`Error getting all projects: ${error}`)
         return NextResponse.json({ error: 'Failed to get all projects' }, { status: 500 })
@@ -29,9 +29,9 @@ export async function POST(request: NextRequest) {
     try {
         const connection = await connectToDb()
         const projectService = new ProjectService(connection)
-        const newProjectDocument = await projectService.createOneProject(project)
+        const newProject = await projectService.createOneProject(project)
 
-        return NextResponse.json(newProjectDocument, { status: 200 })
+        return NextResponse.json(newProject, { status: 200 })
     } catch (error) {
         console.error(`Error creating a new project: ${error}`)
         return NextResponse.json({ error: 'Failed to create a new project' }, { status: 500 })

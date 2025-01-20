@@ -19,9 +19,9 @@ export async function DELETE(
     try {
         const connection = await connectToDb()
         const projectService = new ProjectService(connection)
-        const deletedBulletPointDocument = await projectService.deleteOneBulletPoint(bulletPointId)
+        const deletedBulletPoint = await projectService.deleteOneBulletPoint(bulletPointId)
 
-        return NextResponse.json(deletedBulletPointDocument, { status: 200 })
+        return NextResponse.json(deletedBulletPoint, { status: 200 })
     } catch (error) {
         console.error(`Error deleting a bullet point: ${error}`)
         return NextResponse.json({ error: 'Failed to delete a bullet point' }, { status: 500 })
@@ -52,9 +52,9 @@ export async function PUT(request: NextRequest, { params }: { params: { projectI
     try {
         const connection = await connectToDb()
         const projectService = new ProjectService(connection)
-        const updatedBulletPointDocument = await projectService.updateOneBulletPoint(bulletPoint)
+        const updatedBulletPoint = await projectService.updateOneBulletPoint(bulletPoint)
 
-        return NextResponse.json(updatedBulletPointDocument, { status: 200 })
+        return NextResponse.json(updatedBulletPoint, { status: 200 })
     } catch (error) {
         console.error(`Error updating a bullet point: ${error}`)
         return NextResponse.json({ error: 'Failed to update a bullet point' }, { status: 500 })

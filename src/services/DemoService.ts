@@ -68,7 +68,7 @@ export class DemoService {
 
             return allDemos.map((demo) => mapDemoDocumentToDemo(demo))
         } catch (error) {
-            console.error(`Error getting all demos: ${error}`)
+            console.error(`Error getting all demos:: ${error}`)
             throw new Error('Failed to get all demos')
         }
     }
@@ -86,7 +86,7 @@ export class DemoService {
 
             return mapDemoDocumentToDemo(newDemo)
         } catch (error) {
-            console.error(`Error creating a demo: ${error}`)
+            console.error(`Error creating a demo:: ${error}`)
             throw new Error('Failed to create a demo')
         }
     }
@@ -104,7 +104,7 @@ export class DemoService {
 
             return mapDemoDocumentToDemo(deletedDemo)
         } catch (error) {
-            console.error(`Error deleting a demo: ${error}`)
+            console.error(`Error deleting a demo:: ${error}`)
             throw new Error('Failed to delete a demo')
         }
     }
@@ -122,7 +122,7 @@ export class DemoService {
 
             return mapDemoDocumentToDemo(updatedDemo)
         } catch (error) {
-            console.error(`Error updating a demo: ${error}`)
+            console.error(`Error updating a demo:: ${error}`)
             throw new Error('Failed to update a demo')
         }
     }
@@ -141,15 +141,15 @@ export class DemoService {
 
             await this.s3Client.send(new PutObjectCommand(params))
 
-            const demo = await demoModel.findOneAndUpdate(
+            const updatedDemo = await demoModel.findOneAndUpdate(
                 { id: demoId },
                 { $push: { gallery: { id: imageId, link: `https://${bucketName}.s3.amazonaws.com/${imageId}` } } },
                 { new: true }
             )
 
-            return mapDemoDocumentToDemo(demo)
+            return mapDemoDocumentToDemo(updatedDemo)
         } catch (error) {
-            console.error(`Error uploading an image: ${error}`)
+            console.error(`Error uploading an image:: ${error}`)
             throw new Error('Failed to upload an image')
         }
     }
@@ -160,15 +160,15 @@ export class DemoService {
         try {
             await this.s3Client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: imageId }))
 
-            const demo = await demoModel.findOneAndUpdate(
+            const updatedDemo = await demoModel.findOneAndUpdate(
                 { id: demoId },
                 { $pull: { gallery: { id: imageId } } },
                 { new: true }
             )
 
-            return mapDemoDocumentToDemo(demo)
+            return mapDemoDocumentToDemo(updatedDemo)
         } catch (error) {
-            console.error(`Error deleting an image: ${error}`)
+            console.error(`Error deleting an image:: ${error}`)
             throw new Error('Failed to delete an image')
         }
     }

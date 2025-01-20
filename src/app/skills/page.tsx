@@ -11,7 +11,6 @@ export default function Page() {
     const { toast } = useToast()
     const apiClient = useMemo(() => new ApiClient(), [])
     const [skills, setSkills] = useState<Record<string, Skill[]>>({})
-    const [draggable, setDraggable] = useState<boolean>(true)
 
     useEffect(() => {
         const fetchSkills = async () => {
@@ -26,11 +25,12 @@ export default function Page() {
                 setSkills(skillsMap)
             } catch (error) {
                 console.error(`Error fetching skills: ${error}`)
+                toast({ title: 'Error', description: 'Failed to fetch skills' })
             }
         }
 
         fetchSkills()
-    }, [apiClient])
+    }, [apiClient, toast])
 
     const handleCreateSkill = async (category: string) => {
         const skill = {
@@ -42,10 +42,10 @@ export default function Page() {
         try {
             const newSkill = await apiClient.createSkill(skill)
 
-            setSkills((prevSkills) => ({
-                ...prevSkills,
-                [category]: [...prevSkills[category], newSkill],
-            }))
+            setSkills({
+                ...skills,
+                [category]: [...skills[category], newSkill],
+            })
             toast({ title: 'Success', description: `Created Skill: ${newSkill.id} with default fields` })
         } catch (error) {
             toast({ title: 'Error', description: 'Failed to create a skill' })
@@ -56,7 +56,7 @@ export default function Page() {
     const handleDeleteSkill = async (skillId: string) => {
         try {
             const deletedSkill = await apiClient.deleteSkill(skillId)
-            const shiftedSkills = skills[skillId]
+            const shiftedSkills = skills[deletedSkill.category]
                 .filter((skill) => skill.id !== skillId)
                 .map((skill, idx) => ({ ...skill, order: idx }))
 
@@ -74,12 +74,12 @@ export default function Page() {
         try {
             await apiClient.updateSkill(updatedSkill)
 
-            setSkills((prevSkills) => ({
-                ...prevSkills,
-                [updatedSkill.category]: prevSkills[updatedSkill.category].map((skill) =>
+            setSkills({
+                ...skills,
+                [updatedSkill.category]: skills[updatedSkill.category].map((skill) =>
                     skill.id === updatedSkill.id ? updatedSkill : skill
                 ),
-            }))
+            })
             toast({ title: 'Success', description: `Updated Skill: ${updatedSkill.name}` })
         } catch (error) {
             toast({ title: 'Error', description: 'Failed to update a skill' })
@@ -87,16 +87,16 @@ export default function Page() {
         }
     }
 
-    const handleRearrangeSkills = async (category: string, skills: Skill[]) => {
+    const handleRearrangeSkills = async (category: string, rearrangedSkills: Skill[]) => {
         try {
-            const shiftedSkills = skills.map((skill, idx) => ({ ...skill, order: idx }))
+            const shiftedSkills = rearrangedSkills.map((skill, idx) => ({ ...skill, order: idx }))
 
             Promise.all(shiftedSkills.map((skill) => apiClient.updateSkill(skill)))
 
-            setSkills((prevSkills) => ({
-                ...prevSkills,
+            setSkills({
+                ...skills,
                 [category]: shiftedSkills,
-            }))
+            })
             toast({ title: 'Success', description: `Rearranged Skills` })
         } catch (error) {
             toast({ title: 'Error', description: 'Failed to rearrange skills, refresh the page' })
@@ -117,17 +117,17 @@ export default function Page() {
                             onDragEnd={(result: any) => {
                                 if (!result.destination || result.destination.index === result.source.index) return
 
-                                const shiftedSkills = Array.from(skills[category as keyof typeof SkillCategory])
-                                const [removed] = shiftedSkills.splice(result.source.index, 1)
-                                shiftedSkills.splice(result.destination.index, 0, removed)
+                                const rearrangedSkills = Array.from(skills[category as keyof typeof SkillCategory])
+                                const [removed] = rearrangedSkills.splice(result.source.index, 1)
+                                rearrangedSkills.splice(result.destination.index, 0, removed)
 
-                                handleRearrangeSkills(category as string, shiftedSkills)
+                                handleRearrangeSkills(category as string, rearrangedSkills)
                             }}
                         >
                             <Droppable
                                 droppableId={category}
                                 direction="vertical"
-                                isDropDisabled={!draggable}
+                                isDropDisabled={false}
                                 isCombineEnabled={false}
                                 ignoreContainerClipping={true}
                             >
@@ -142,7 +142,7 @@ export default function Page() {
                                                 key={skill.id}
                                                 draggableId={skill.id.toString()}
                                                 index={skill.order}
-                                                isDragDisabled={!draggable}
+                                                isDragDisabled={false}
                                             >
                                                 {(provided: any) => (
                                                     <div

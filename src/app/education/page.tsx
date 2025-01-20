@@ -20,11 +20,12 @@ export default function Page() {
                 setEducations(fetchedEducations)
             } catch (error) {
                 console.error(`Error fetching educations: ${error}`)
+                toast({ title: 'Error', description: 'Failed to fetch educations' })
             }
         }
 
         fetchEducations()
-    }, [apiClient])
+    }, [apiClient, toast])
 
     const handleCreateProject = async () => {
         const education = {
@@ -38,7 +39,7 @@ export default function Page() {
         try {
             const newEducation = await apiClient.createEducation(education)
 
-            setEducations((prevEducations) => [...prevEducations, newEducation])
+            setEducations([...educations, newEducation])
             toast({ title: 'Success', description: `Created Education: ${newEducation.id} with default fields` })
         } catch (error) {
             toast({ title: 'Error', description: 'Failed to create an education' })
@@ -70,8 +71,8 @@ export default function Page() {
         try {
             await apiClient.updateEducation(updatedEducation)
 
-            setEducations((prevEducations) =>
-                prevEducations.map((education) => (education.id === updatedEducation.id ? updatedEducation : education))
+            setEducations(
+                educations.map((education) => (education.id === updatedEducation.id ? updatedEducation : education))
             )
             toast({ title: 'Success', description: `Updated Education: ${updatedEducation.school}` })
         } catch (error) {
@@ -80,9 +81,9 @@ export default function Page() {
         }
     }
 
-    const handleRearrangeEducations = async (educations: Education[]) => {
+    const handleRearrangeEducations = async (rearrangedEducations: Education[]) => {
         try {
-            const shiftedEducations = educations.map((education, idx) => ({ ...education, order: idx }))
+            const shiftedEducations = rearrangedEducations.map((education, idx) => ({ ...education, order: idx }))
 
             Promise.all(shiftedEducations.map((education) => apiClient.updateEducation(education)))
 
@@ -100,11 +101,11 @@ export default function Page() {
                 onDragEnd={(result: any) => {
                     if (!result.destination || result.destination.index === result.source.index) return
 
-                    const shiftedEducations = Array.from(educations)
-                    const [removed] = shiftedEducations.splice(result.source.index, 1)
-                    shiftedEducations.splice(result.destination.index, 0, removed)
+                    const rearrangedEducations = Array.from(educations)
+                    const [removed] = rearrangedEducations.splice(result.source.index, 1)
+                    rearrangedEducations.splice(result.destination.index, 0, removed)
 
-                    handleRearrangeEducations(shiftedEducations)
+                    handleRearrangeEducations(rearrangedEducations)
                 }}
             >
                 <Droppable

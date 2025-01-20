@@ -119,11 +119,11 @@ export const ProjectEntry = ({
                     onDragEnd={(result: any) => {
                         if (!result.destination || result.destination.index === result.source.index) return
 
-                        const shiftedBulletPoints = Array.from(bulletPoints)
-                        const [removed] = shiftedBulletPoints.splice(result.source.index, 1)
-                        shiftedBulletPoints.splice(result.destination.index, 0, removed)
+                        const rearrangedBulletPoints = Array.from(bulletPoints)
+                        const [removed] = rearrangedBulletPoints.splice(result.source.index, 1)
+                        rearrangedBulletPoints.splice(result.destination.index, 0, removed)
 
-                        handleRearrangeBulletPoints(project.id, shiftedBulletPoints)
+                        handleRearrangeBulletPoints(project.id, rearrangedBulletPoints)
                     }}
                 >
                     <Droppable

@@ -11,6 +11,7 @@ export default function Page() {
     const { toast } = useToast()
     const apiClient = useMemo(() => new ApiClient(), [])
     const [demos, setDemos] = useState<Demo[]>([])
+    const [draggable, setDraggable] = useState<boolean>(true)
 
     useEffect(() => {
         const fetchDemos = async () => {
@@ -20,11 +21,12 @@ export default function Page() {
                 setDemos(fetchedDemos)
             } catch (error) {
                 console.error(`Error fetching demos: ${error}`)
+                toast({ title: 'Error', description: 'Failed to fetch demos' })
             }
         }
 
         fetchDemos()
-    }, [apiClient])
+    }, [apiClient, toast])
 
     const handleCreateDemo = async () => {
         const demo = {
@@ -42,7 +44,7 @@ export default function Page() {
         try {
             const newDemo = await apiClient.createDemo(demo)
 
-            setDemos((prevDemos) => [...prevDemos, newDemo])
+            setDemos([...demos, newDemo])
             toast({ title: 'Success', description: `Created Demo: ${newDemo.id} with default fields` })
         } catch (error) {
             toast({ title: 'Error', description: 'Failed to create a demo' })
@@ -53,8 +55,16 @@ export default function Page() {
     const handleDeleteDemo = async (id: string) => {
         try {
             const deletedDemo = await apiClient.deleteDemo(id)
+            const shiftedDemos = demos
+                .filter((demo) => demo.id !== id)
+                .map((demo, idx) => ({
+                    ...demo,
+                    order: idx,
+                }))
 
-            setDemos((prevDemos) => prevDemos.filter((demo) => demo.id !== id))
+            await Promise.all(shiftedDemos.map((demo) => apiClient.updateDemo(demo)))
+
+            setDemos(shiftedDemos)
             toast({ title: 'Success', description: `Deleted Demo: ${deletedDemo.title}` })
         } catch (error) {
             toast({ title: 'Error', description: 'Failed to delete a demo' })
@@ -66,7 +76,7 @@ export default function Page() {
         try {
             await apiClient.updateDemo(updatedDemo)
 
-            setDemos((prevDemos) => prevDemos.map((demo) => (demo.id === updatedDemo.id ? updatedDemo : demo)))
+            setDemos(demos.map((demo) => (demo.id === updatedDemo.id ? updatedDemo : demo)))
             toast({ title: 'Success', description: `Updated Demo: ${updatedDemo.title}` })
         } catch (error) {
             toast({ title: 'Error', description: 'Failed to update a demo' })
@@ -75,12 +85,12 @@ export default function Page() {
     }
 
     const handleRefreshDemos = (updatedDemo: Demo) => {
-        setDemos((prevDemos) => prevDemos.map((demo) => (demo.id === updatedDemo.id ? updatedDemo : demo)))
+        setDemos(demos.map((demo) => (demo.id === updatedDemo.id ? updatedDemo : demo)))
     }
 
-    const handleRearrangeDemos = (demos: Demo[]) => {
+    const handleRearrangeDemos = (rearrangedDemos: Demo[]) => {
         try {
-            const shiftedDemos = demos.map((demo, idx) => ({ ...demo, order: idx }))
+            const shiftedDemos = rearrangedDemos.map((demo, idx) => ({ ...demo, order: idx }))
 
             Promise.all(shiftedDemos.map((demo) => apiClient.updateDemo(demo)))
 
@@ -98,11 +108,11 @@ export default function Page() {
                 onDragEnd={(result: any) => {
                     if (!result.destination || result.destination.index === result.source.index) return
 
-                    const shiftedDemos = Array.from(demos)
-                    const [removed] = shiftedDemos.splice(result.source.index, 1)
-                    shiftedDemos.splice(result.destination.index, 0, removed)
+                    const rearrangedDemos = Array.from(demos)
+                    const [removed] = rearrangedDemos.splice(result.source.index, 1)
+                    rearrangedDemos.splice(result.destination.index, 0, removed)
 
-                    handleRearrangeDemos(shiftedDemos)
+                    handleRearrangeDemos(rearrangedDemos)
                 }}
             >
                 <Droppable
@@ -119,7 +129,7 @@ export default function Page() {
                                     key={demo.id}
                                     draggableId={demo.id.toString()}
                                     index={demo.order}
-                                    isDragDisabled={false}
+                                    isDragDisabled={!draggable}
                                 >
                                     {(provided: any) => (
                                         <div
@@ -132,6 +142,7 @@ export default function Page() {
                                                 handleDeleteDemo={handleDeleteDemo}
                                                 handleUpdateDemo={handleUpdateDemo}
                                                 handleRefreshDemos={handleRefreshDemos}
+                                                handleLockDemos={setDraggable}
                                             />
                                         </div>
                                     )}

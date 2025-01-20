@@ -56,7 +56,7 @@ export class EducationService {
 
             return allEducations.map((education) => mapEducationDocumentToEducation(education))
         } catch (error) {
-            console.error(`Error getting all educations: ${error}`)
+            console.error(`Error getting all educations:: ${error}`)
             throw new Error('Failed to get all educations')
         }
     }
@@ -74,7 +74,7 @@ export class EducationService {
 
             return mapEducationDocumentToEducation(newEducation)
         } catch (error) {
-            console.error(`Error creating an education: ${error}`)
+            console.error(`Error creating an education:: ${error}`)
             throw new Error('Failed to create an education')
         }
     }
@@ -92,7 +92,7 @@ export class EducationService {
 
             return mapEducationDocumentToEducation(deletedEducation)
         } catch (error) {
-            console.error(`Error deleting an education: ${error}`)
+            console.error(`Error deleting an education:: ${error}`)
             throw new Error('Failed to delete an education')
         }
     }
@@ -110,7 +110,7 @@ export class EducationService {
 
             return mapEducationDocumentToEducation(updatedEducation)
         } catch (error) {
-            console.error(`Error updating an education: ${error}`)
+            console.error(`Error updating an education:: ${error}`)
             throw new Error('Failed to update an education')
         }
     }

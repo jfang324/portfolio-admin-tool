@@ -79,7 +79,7 @@ export class ProjectService {
 
             return allProjects.map((project) => mapProjectDocumentToProject(project))
         } catch (error) {
-            console.error(`Error getting all projects: ${error}`)
+            console.error(`Error getting all projects:: ${error}`)
             throw new Error('Failed to get all projects')
         }
     }
@@ -97,7 +97,7 @@ export class ProjectService {
 
             return mapProjectDocumentToProject(newProject)
         } catch (error) {
-            console.error(`Error creating a project: ${error}`)
+            console.error(`Error creating a project:: ${error}`)
             throw new Error('Failed to create a project')
         }
     }
@@ -115,7 +115,7 @@ export class ProjectService {
 
             return mapProjectDocumentToProject(deletedProject)
         } catch (error) {
-            console.error(`Error deleting a project: ${error}`)
+            console.error(`Error deleting a project:: ${error}`)
             throw new Error('Failed to delete a project')
         }
     }
@@ -133,7 +133,7 @@ export class ProjectService {
 
             return mapProjectDocumentToProject(updatedProject)
         } catch (error) {
-            console.error(`Error updating a project: ${error}`)
+            console.error(`Error updating a project:: ${error}`)
             throw new Error('Failed to update a project')
         }
     }
@@ -147,11 +147,11 @@ export class ProjectService {
         const bulletPointModel = BulletPointModel(this.connection)
 
         try {
-            const bulletPoints = await bulletPointModel.find({ projectId }).sort({ order: 1 })
+            const allBulletPoints = await bulletPointModel.find({ projectId }).sort({ order: 1 })
 
-            return bulletPoints.map((bulletPoint) => mapBulletPointDocumentToBulletPoint(bulletPoint))
+            return allBulletPoints.map((bulletPoint) => mapBulletPointDocumentToBulletPoint(bulletPoint))
         } catch (error) {
-            console.error(`Error getting bullet points of a project: ${error}`)
+            console.error(`Error getting bullet points of a project:: ${error}`)
             throw new Error('Failed to get bullet points of a project')
         }
     }
@@ -169,7 +169,7 @@ export class ProjectService {
 
             return mapBulletPointDocumentToBulletPoint(newBulletPoint)
         } catch (error) {
-            console.error(`Error creating a bullet point: ${error}`)
+            console.error(`Error creating a bullet point:: ${error}`)
             throw new Error('Failed to create a bullet point')
         }
     }
@@ -187,7 +187,7 @@ export class ProjectService {
 
             return mapBulletPointDocumentToBulletPoint(deletedBulletPoint)
         } catch (error) {
-            console.error(`Error deleting a bullet point: ${error}`)
+            console.error(`Error deleting a bullet point:: ${error}`)
             throw new Error('Failed to delete a bullet point')
         }
     }
@@ -205,7 +205,7 @@ export class ProjectService {
 
             return mapBulletPointDocumentToBulletPoint(updatedBulletPoint)
         } catch (error) {
-            console.error(`Error updating a bullet point: ${error}`)
+            console.error(`Error updating a bullet point:: ${error}`)
             throw new Error('Failed to update a bullet point')
         }
     }
