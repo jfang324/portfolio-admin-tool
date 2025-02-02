@@ -9,6 +9,7 @@ const projectSchema: Schema<ProjectDocument> = new Schema(
         order: {
             type: Number,
             required: true,
+            min: [0, 'Order must be greater than 0'],
         },
         name: {
             type: String,

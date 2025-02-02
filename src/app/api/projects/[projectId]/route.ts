@@ -2,7 +2,7 @@ import connectToDb from '@/lib/db'
 import { ProjectService } from '@/services/ProjectService'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function DELETE(request: NextRequest, { params }: { params: { projectId: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
     const { projectId } = await params
 
     if (!projectId) {
@@ -21,7 +21,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { proje
     }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { projectId: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
     const { projectId } = await params
 
     if (!projectId) {

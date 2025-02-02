@@ -3,7 +3,7 @@ import getS3Client from '@/lib/s3'
 import { DemoService } from '@/services/DemoService'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function DELETE(request: NextRequest, { params }: { params: { demoId: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ demoId: string }> }) {
     const { demoId } = await params
 
     if (!demoId) {
@@ -23,7 +23,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { demoI
     }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { demoId: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ demoId: string }> }) {
     const { demoId } = await params
 
     if (!demoId) {

@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { projectId: string; bulletPointId: string } }
+    { params }: { params: Promise<{ projectId: string; bulletPointId: string }> }
 ) {
     const { projectId, bulletPointId } = await params
 
@@ -28,7 +28,10 @@ export async function DELETE(
     }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { projectId: string; bulletPointId: string } }) {
+export async function PUT(
+    request: NextRequest,
+    { params }: { params: Promise<{ projectId: string; bulletPointId: string }> }
+) {
     const { projectId, bulletPointId } = await params
 
     if (!projectId) {

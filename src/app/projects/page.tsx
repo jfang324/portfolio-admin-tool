@@ -5,7 +5,6 @@ import { useToast } from '@/hooks/use-toast'
 import { BulletPoint } from '@/interfaces/BulletPoint'
 import { Project } from '@/interfaces/Project'
 import { ApiClient } from '@/services/ApiClient'
-import { set } from 'mongoose'
 import { useEffect, useMemo, useState } from 'react'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 

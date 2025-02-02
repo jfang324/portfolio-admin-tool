@@ -2,7 +2,7 @@ import connectToDb from '@/lib/db'
 import { EducationService } from '@/services/EducationService'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function DELETE(request: NextRequest, { params }: { params: { educationId: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ educationId: string }> }) {
     const { educationId } = await params
 
     if (!educationId) {
@@ -21,7 +21,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { educa
     }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { educationId: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ educationId: string }> }) {
     const { educationId } = await params
 
     if (!educationId) {

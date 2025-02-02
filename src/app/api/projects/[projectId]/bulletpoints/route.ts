@@ -2,7 +2,7 @@ import connectToDb from '@/lib/db'
 import { ProjectService } from '@/services/ProjectService'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest, { params }: { params: { projectId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
     const { projectId } = await params
 
     if (!projectId) {
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest, { params }: { params: { projectI
     }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { projectId: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
     const { projectId } = await params
 
     if (!projectId) {

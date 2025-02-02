@@ -1,9 +1,9 @@
 declare global {
     var db: {
-        connection: any
+        connection: mongoose.Connection
     } | null
     var s3: {
-        client: any
+        client: S3Client
     } | null
 }
 

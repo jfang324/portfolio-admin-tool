@@ -9,6 +9,7 @@ const educationSchema: Schema<EducationDocument> = new Schema(
         order: {
             type: Number,
             required: true,
+            min: [0, 'Order must be greater than 0'],
         },
         school: {
             type: String,
@@ -25,6 +26,8 @@ const educationSchema: Schema<EducationDocument> = new Schema(
         gpa: {
             type: Number,
             required: true,
+            min: [0, 'GPA must be greater than 0'],
+            max: [4, 'GPA must be less than 4'],
         },
     },
     { collection: 'Educations' }

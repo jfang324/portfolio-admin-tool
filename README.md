@@ -16,21 +16,25 @@ To use this application, you will need accounts for the following services:
 To install the application locally, run the following commands:
 
 1. Clone the repository:
+
 ```sh
 git clone https://github.com/jfang324/portfolio-admin-tool.git
 ```
 
 2. Navigate to the project directory:
+
 ```sh
 cd portfolio-admin-tool
 ```
 
 3. Install the dependencies:
+
 ```sh
-npm install --legacy-peer-deps
+npm install --force
 ```
 
 4. Create a `.env` file in the project directory and add the following environment variables:
+
 ```env
 //use values provided after creating a bucket in s3
 BUCKET_NAME = <bucket name>
@@ -45,6 +49,7 @@ DATABASE_URL = <url provided after creating and choosing to programatiically con
 ```
 
 5. Start the application:
+
 ```sh
 npm run build
 npm run start

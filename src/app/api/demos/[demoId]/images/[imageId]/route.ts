@@ -3,7 +3,10 @@ import getS3Client from '@/lib/s3'
 import { DemoService } from '@/services/DemoService'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function DELETE(request: NextRequest, { params }: { params: { demoId: string; imageId: string } }) {
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: Promise<{ demoId: string; imageId: string }> }
+) {
     const { demoId, imageId } = await params
 
     if (!demoId) {

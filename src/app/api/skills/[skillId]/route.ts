@@ -2,7 +2,7 @@ import connectToDb from '@/lib/db'
 import { SkillService } from '@/services/SkillService'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function DELETE(request: NextRequest, { params }: { params: { skillId: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ skillId: string }> }) {
     const { skillId } = await params
 
     if (!skillId) {
@@ -21,7 +21,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { skill
     }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { skillId: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ skillId: string }> }) {
     const { skillId } = await params
 
     if (!skillId) {
