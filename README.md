@@ -83,3 +83,4 @@ Jeffery Fang - [jefferyfang324@gmail.com](mailto:jefferyfang324@gmail.com)
 -   MongoDB Atlas
 -   Amazon S3
 -   shadcn/ui
+-   react-beautiful-dnd
